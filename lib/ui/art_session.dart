@@ -431,9 +431,12 @@ class ArtSession extends ChangeNotifier {
     tab = index;
     keypad = null;
     discardDialog = false;
+    // Leaving Broadcast: stop Auracast scan so device can return to normal.
     if (leavingBroadcast) _later(stopAuracastScan(silent: true));
     if (index == 1 && ready) _later(refreshControl());
-    if (index == 3 && ready) _later(startAuracastScan());
+    // Do NOT auto-start Auracast scan on tab enter — 0x32 01 may put
+    // BP1048/QCC3095 into broadcast-scan mode and hurt speaker discovery.
+    // User must tap "Start scan" explicitly.
     notifyListeners();
   }
 
