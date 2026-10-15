@@ -1,0 +1,119 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
+}
+
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file('local.properties')
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withReader('UTF-8') { reader ->
+        localProperties.load(reader)
+    }
+}
+
+def flutterVersionCode = localProperties.getProperty('flutter.versionCode')
+if (flutterVersionCode == null) {
+    flutterVersionCode = '1'
+}
+
+def flutterVersionName = localProperties.getProperty('flutter.versionName')
+if (flutterVersionName == null) {
+    flutterVersionName = '1.0'
+}
+
+def keystorePropertiesFile = rootProject.file("key.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withReader("UTF-8") { reader ->
+        keystoreProperties.load(reader)
+    }
+}
+def storeFileProp = keystoreProperties.getProperty("storeFile")
+def keyAliasProp = keystoreProperties.getProperty("keyAlias")
+def keyPasswordProp = keystoreProperties.getProperty("keyPassword")
+def storePasswordProp = keystoreProperties.getProperty("storePassword")
+def hasReleaseKeystore = storeFileProp != null && !storeFileProp.trim().isEmpty() &&
+        keyAliasProp != null && !keyAliasProp.trim().isEmpty() &&
+        keyPasswordProp != null && !keyPasswordProp.trim().isEmpty() &&
+        storePasswordProp != null && !storePasswordProp.trim().isEmpty()
+
+android {
+    namespace = "com.lekeaudiobt.app"
+    compileSdkVersion flutter.compileSdkVersion
+    ndkVersion = "25.1.8937393"
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+    }
+
+    defaultConfig {
+        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
+        applicationId "com.lekeaudiobt.app"
+        // You can update the following values to match your application needs.
+        // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
+        minSdkVersion flutter.minSdkVersion
+        targetSdkVersion 34
+        versionCode flutterVersionCode.toInteger()
+        versionName flutterVersionName
+    }
+
+    signingConfigs {
+        // Fixed debug keystore so cloud debug APKs share one signature
+        // (avoids INSTALL_FAILED_UPDATE_INCOMPATIBLE on every update).
+        debug {
+            storeFile file("keystore/debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+        if (hasReleaseKeystore) {
+            release {
+                keyAlias keyAliasProp
+                keyPassword keyPasswordProp
+                storeFile file(storeFileProp)
+                storePassword storePasswordProp
+                v1SigningEnabled true // V1签名
+                v2SigningEnabled true // V2签名
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            if (hasReleaseKeystore) {
+                signingConfig signingConfigs.release
+            }
+            minifyEnabled false
+//            useProguard false
+            shrinkResources false
+//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            ndk {
+                abiFilters "armeabi-v7a", "arm64-v8a"
+            }
+        }
+        debug {
+            signingConfig signingConfigs.debug
+            ndk {
+                abiFilters "armeabi-v7a", "arm64-v8a"
+            }
+        }
+    }
+}
+
+flutter {
+    source '../..'
+}
+
+dependencies {
+    implementation 'androidx.multidex:multidex:2.0.1'
+}

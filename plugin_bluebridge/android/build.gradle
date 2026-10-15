@@ -1,0 +1,55 @@
+group 'com.bluebridge'
+version '1.0'
+
+buildscript {
+    repositories {
+        google()
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.2.2'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        jcenter()
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    namespace = "com.bluebridge"
+    compileSdkVersion 34
+
+    defaultConfig {
+        minSdkVersion 18
+        targetSdkVersion 34
+        sourceSets {
+            main {
+                java.srcDirs = ['src/main/java', 'src/main/aidl']
+            }
+        }
+    }
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+    buildFeatures {
+        aidl true
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+
+    //implementation 'com.inuker.bluetooth:library:1.4.0'
+}

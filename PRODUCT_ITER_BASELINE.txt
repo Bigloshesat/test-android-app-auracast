@@ -1,0 +1,7 @@
+product-iter baseline
+forked: 2026-10-15
+from: kele-bluetooth-app-source (app-debug-25)
+apk-sha1: d6d418b85f784b83fe33ca43b128874a278fbc12
+cloud-era: cursor/volume-limit-enforce-eb9f @ db50558
+next-build: product-01
+note: Windows host has no system git; cloud agent owns git + flutter build
